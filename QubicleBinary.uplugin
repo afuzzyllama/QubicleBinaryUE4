@@ -1,0 +1,21 @@
+{
+	"FileVersion" : 3,
+	
+	"FriendlyName" : "Qubicle Binary for UnrealEngine",
+	"Version" : 1,
+	"VersionName" : "1.0",
+	"CreatedBy" : "afuzzyllama",
+	"CreatedByURL" : "www.pixelsforglory.com",
+	"EngineVersion" : "4.7.0",
+	"Description" : "Implements support for the Qubicle Binary Data Exchange format",
+	"Category" : "Voxel",
+	"EnabledByDefault" : true,
+	
+	"Modules" :
+	[
+		{
+			"Name" : "QubicleBinary",
+			"Type" : "Runtime"
+		}
+	]
+}
