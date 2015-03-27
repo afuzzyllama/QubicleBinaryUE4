@@ -3,12 +3,27 @@
 #include "QubicleBinaryPrivatePCH.h"
 #include "QubicleBinaryReader.h"
 
-const uint32 QubicleBinaryReader::CODEFLAG = 2;
-const uint32 QubicleBinaryReader::NEXTSLICEFLAG = 6;
+const uint32 FQubicleBinaryReader::CODEFLAG = 2;
+const uint32 FQubicleBinaryReader::NEXTSLICEFLAG = 6;
 
-
-bool QubicleBinaryReader::ReadIntoObject(TArray<uint8>& BinaryData, IQubicleBinaryAccessor* ContainerObject)
+bool FQubicleBinaryReader::ReadFileIntoObject(FString FileName, IQubicleBinaryAccessor* ContainerObject)
 {
+    check(ContainerObject != nullptr);
+    
+    TArray<uint8> BinaryData;
+    if(!FFileHelper::LoadFileToArray(BinaryData, *FileName))
+    {
+        UE_LOG(LogQubicleBinary, Error, TEXT("Could not read file"));
+    }
+    
+    return FQubicleBinaryReader::ReadIntoObject(BinaryData, ContainerObject);
+    
+}
+
+bool FQubicleBinaryReader::ReadIntoObject(TArray<uint8>& BinaryData, IQubicleBinaryAccessor* ContainerObject)
+{
+    check(ContainerObject != nullptr);
+
     FMemoryReader Reader(BinaryData, false);
     Reader.Seek(0);
     
@@ -33,7 +48,7 @@ bool QubicleBinaryReader::ReadIntoObject(TArray<uint8>& BinaryData, IQubicleBina
                 switch (Build)
                 {
                 case 0:
-                    return QubicleBinaryReader::ReadIntoObject_1_1_0_0(BinaryData, ContainerObject);
+                    return FQubicleBinaryReader::ReadIntoObject_1_1_0_0(BinaryData, ContainerObject);
                     break;
 
                 }
@@ -47,7 +62,7 @@ bool QubicleBinaryReader::ReadIntoObject(TArray<uint8>& BinaryData, IQubicleBina
     return false;
 }
 
-bool QubicleBinaryReader::ReadIntoObject_1_1_0_0(TArray<uint8>& BinaryData, IQubicleBinaryAccessor* ContainerObject)
+bool FQubicleBinaryReader::ReadIntoObject_1_1_0_0(TArray<uint8>& BinaryData, IQubicleBinaryAccessor* ContainerObject)
 {
     FMemoryReader Reader(BinaryData, false);
 
@@ -121,7 +136,7 @@ bool QubicleBinaryReader::ReadIntoObject_1_1_0_0(TArray<uint8>& BinaryData, IQub
                 {
                     for(uint32 x = 0; x < SizeX; x++)
                     {
-                        ContainerObject->SetVoxel(MatrixName, x, y, z, QubicleBinaryReader::ReadColor(&Reader, ColorFormat));
+                        ContainerObject->SetVoxel(MatrixName, x, y, z, FQubicleBinaryReader::ReadColor(&Reader, ColorFormat));
                     }
                 }
             }
@@ -143,11 +158,11 @@ bool QubicleBinaryReader::ReadIntoObject_1_1_0_0(TArray<uint8>& BinaryData, IQub
                     Reader << Data;
          
                     uint32 x, y;
-                    if (Data == QubicleBinaryReader::NEXTSLICEFLAG)
+                    if (Data == FQubicleBinaryReader::NEXTSLICEFLAG)
                     {
                         break;
                     }
-                    else if (Data == QubicleBinaryReader::CODEFLAG)
+                    else if (Data == FQubicleBinaryReader::CODEFLAG)
                     {
                         Reader << Count;
                         Reader << Data;
@@ -159,7 +174,7 @@ bool QubicleBinaryReader::ReadIntoObject_1_1_0_0(TArray<uint8>& BinaryData, IQub
                             y = Index / SizeX + 1; // div = integer division e.g. 12 div 8 = 1
                             Index++;
 
-                            ContainerObject->SetVoxel(MatrixName, x, y, z, QubicleBinaryReader::ReadColor(&Reader, ColorFormat));
+                            ContainerObject->SetVoxel(MatrixName, x, y, z, FQubicleBinaryReader::ReadColor(&Reader, ColorFormat));
                         }
                     }
                     else
@@ -168,7 +183,7 @@ bool QubicleBinaryReader::ReadIntoObject_1_1_0_0(TArray<uint8>& BinaryData, IQub
                         y = Index / SizeX + 1;
                         Index++;
 
-                        ContainerObject->SetVoxel(MatrixName, x, y, z, QubicleBinaryReader::ReadColor(&Reader, ColorFormat));
+                        ContainerObject->SetVoxel(MatrixName, x, y, z, FQubicleBinaryReader::ReadColor(&Reader, ColorFormat));
                     }
                 }
             }
@@ -179,7 +194,7 @@ bool QubicleBinaryReader::ReadIntoObject_1_1_0_0(TArray<uint8>& BinaryData, IQub
 }
 
 
-FColor QubicleBinaryReader::ReadColor(FMemoryReader* Reader, uint32 ColorFormat)
+FColor FQubicleBinaryReader::ReadColor(FMemoryReader* Reader, uint32 ColorFormat)
 {
     uint8 R,G,B,A;
     if(ColorFormat == 0)
