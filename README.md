@@ -6,4 +6,5 @@ More information on the format can be found here: [Qubicle Binary Data Exchange 
 Basic usage:
 Implement the `IQubicleBinaryAccessor` interface
 
-Then on that object call `FQubicleBinaryReader::ReadFileIntoObject(FileName, dynamic_cast<IQubicleBinaryAccessor*>(this));`
+Then on that object call 
+`FQubicleBinaryReader::ReadFileIntoObject(FileName, dynamic_cast<IQubicleBinaryAccessor*>(this));`
