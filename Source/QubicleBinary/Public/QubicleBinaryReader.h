@@ -42,5 +42,5 @@ private:
 	/**
 	 * Converts a uint32 to FColor.  Format Qubicle Editor uses is different than Unreal's FColor(uint32) constructor, so that conversion is taken care of here.
 	 */
-	static FColor FQubicleBinaryReader::ReadColor(uint32 Color, uint32 ColorFormat);
+	static FColor ReadColor(uint32 Color, uint32 ColorFormat);
 };
